@@ -42,31 +42,26 @@ def init_stock_basic_info():
                 row_value_tuple = row_value_tuple + temp_tuple
                 continue
             if temp_table_field == "list_date":
-                temp_list_date_str = ""
-
+                temp_list_date = None
                 if len(temp_value_str.strip()) == 0:
-                    temp_list_date_str = "null"
+                    temp_list_date = None
                 else:
-                    temp_list_date_str = "str_to_date('" + temp_value_str.strip() + "','%Y%m%d')"
-                temp_list_date_tuple = (datetime.date.strftime(temp_value_str.strip(), '%Y%m%d'), )
+                    temp_list_date = datetime.datetime.strptime(temp_value_str.strip(), "%Y%m%d").date()
+                temp_list_date_tuple = (temp_list_date,)
                 row_value_tuple = row_value_tuple + temp_list_date_tuple
 
             elif temp_table_field == "delist_date":
-                temp_delist_date_str = ""
-                if len(temp_value_str.strip()) == 0:
-                    temp_delist_date_str = "null"
-                else:
-                    temp_delist_date_str = "str_to_date('" + temp_value_str.strip() + "','%Y%m%d')"
-                    # datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')
-                temp_delist_date_tuple = (temp_delist_date_str, )
+                temp_delist_date = None
+                if len(temp_value_str.strip()) > 0:
+                    temp_delist_date = datetime.datetime.strptime(temp_value_str.strip(), "%Y%m%d").date()
+                temp_delist_date_tuple = (temp_delist_date, )
                 row_value_tuple = row_value_tuple + temp_delist_date_tuple
             else:
                 temp_value_tuple = (each_row_series[temp_query_field],)
                 row_value_tuple = row_value_tuple + temp_value_tuple
         data_list.append(row_value_tuple)
         print(temp_row_no)
-        batch_insert_data(mariadb_manager.connect, insert_sql_stmt, data_list)
-        break
+    batch_insert_data(mariadb_manager.connect, insert_sql_stmt, data_list)
     print()
 
 
